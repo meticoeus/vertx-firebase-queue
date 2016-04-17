@@ -24,7 +24,7 @@ public class Queue {
 
     private Vertx vertx;
     private When when;
-    Logger log = LoggerFactory.getLogger(Queue.class.getName());
+    private Logger log = LoggerFactory.getLogger(Queue.class.getName());
 
     private int numWorkers = DEFAULT_NUM_WORKERS;
     private boolean sanitize = DEFAULT_SANITIZE;
