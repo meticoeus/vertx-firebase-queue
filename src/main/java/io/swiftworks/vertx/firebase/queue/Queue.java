@@ -97,7 +97,6 @@ public class Queue {
             workers.add(new Worker(vertx, when, tasksRef, processId, sanitize, suppressStack, processingHandler));
         }
 
-        System.out.println("Initialized workers: " + numWorkers);
         return watchSpec();
     }
 
