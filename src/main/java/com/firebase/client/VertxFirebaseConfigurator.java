@@ -1,7 +1,7 @@
 package com.firebase.client;
 
 import io.vertx.core.Context;
-import io.vertx.core.Verticle;
+import io.vertx.core.Vertx;
 import io.vertx.core.logging.LoggerFactory;
 
 import java.util.concurrent.ScheduledFuture;
@@ -11,24 +11,21 @@ import java.util.concurrent.ScheduledFuture;
  *
  * @author meticoeus
  */
-public class VertxFirebaseFactory {
-    private final Verticle owner;
+public class VertxFirebaseConfigurator {
+    private final Vertx vertx;
     private final Context context;
     private final io.vertx.core.logging.Logger logger;
 
 
-    public VertxFirebaseFactory(Verticle owner) {
-        this.owner = owner;
-        this.context = owner.getVertx().getOrCreateContext();
+    public VertxFirebaseConfigurator(Vertx vertx) {
+        this.vertx = vertx;
+        this.context = vertx.getOrCreateContext();
         this.logger = LoggerFactory.getLogger(Firebase.class.getName());
-    }
-
-    public Firebase createRef(String ref) {
         Config config = Firebase.getDefaultConfig();
         config.setLogger(new VertxLogger());
         config.setEventTarget(new VertxRunner());
         config.setRunLoop(new VertxRunner());
-        return new Firebase(ref, config);
+        Firebase.setDefaultConfig(config);
     }
 
     private class VertxRunner implements RunLoop, EventTarget {
@@ -45,7 +42,7 @@ public class VertxFirebaseFactory {
 
         @Override
         public ScheduledFuture schedule(final Runnable runnable, long delay) {
-            VertxScheduledRunnable future = new VertxScheduledRunnable(owner.getVertx(), delay, runnable);
+            VertxScheduledRunnable future = new VertxScheduledRunnable(vertx, delay, runnable);
             scheduleNow(future);
             return future;
         }
