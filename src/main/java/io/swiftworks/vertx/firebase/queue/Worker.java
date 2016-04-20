@@ -607,8 +607,8 @@ public class Worker {
                         }
 
                         String id = processId + ":" + taskNumber;
-                        if (task.child("_state").getValue() == spec.getInProgressState()
-                                && task.child("_owner").getValue() == id) {
+                        if (Holder.nullSafeEquals(task.child("_state").getValue(), spec.getInProgressState())
+                            && Holder.nullSafeEquals(task.child("_owner").getValue(), id)) {
 
                             Map<String, Object> _error_details = new HashMap<>();
                             int attempts = 0;
@@ -629,8 +629,8 @@ public class Worker {
                             task.child("_error_details").setValue(null);
 
                             _error_details.put("previous_state", spec.getInProgressState());
-                            _error_details.put("error", errorString);
-                            _error_details.put("error_stack", errorStack);
+                            _error_details.put("error", errorString.getValue());
+                            _error_details.put("error_stack", errorStack.getValue());
                             _error_details.put("attempts", attempts + 1);
                             task.child("_error_details").setValue(_error_details);
                             return Transaction.success(task);
