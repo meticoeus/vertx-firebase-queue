@@ -519,7 +519,9 @@ public class Worker {
                                 } else {
                                     task.child("_state").setValue(spec.getFinishedState());
                                 }
-                            } if (spec.getFinishedState() == null) {
+                            }
+
+                            if (spec.getFinishedState() == null) {
                                 task.setValue(null);
                                 return Transaction.success(task);
                             } else {
