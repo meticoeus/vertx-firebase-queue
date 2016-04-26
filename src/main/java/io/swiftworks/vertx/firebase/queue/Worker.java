@@ -419,8 +419,10 @@ public class Worker {
                 @Override
                 public void onChildRemoved(DataSnapshot snapshot) {
                     String taskName = snapshot.getKey();
-                    vertx.cancelTimer(expiryTimeouts.get(taskName));
-                    expiryTimeouts.remove(taskName);
+                    if (expiryTimeouts.containsKey(taskName)) {
+                        vertx.cancelTimer(expiryTimeouts.get(taskName));
+                        expiryTimeouts.remove(taskName);
+                    }
                     owners.remove(taskName);
                 }
 
