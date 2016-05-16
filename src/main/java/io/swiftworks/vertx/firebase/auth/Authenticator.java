@@ -36,6 +36,13 @@ public class Authenticator {
         this.firebase = firebase;
     }
 
+    public Authenticator(Vertx vertx, When when, Firebase firebase, long refreshInterval) {
+        this.vertx = vertx;
+        this.when = when;
+        this.firebase = firebase;
+        this.refreshInterval = refreshInterval;
+    }
+
     public Promise<AuthData> authenticate(TokenProvider provider) {
         Deferred<AuthData> deferred = when.defer();
 
