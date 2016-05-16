@@ -6,12 +6,18 @@ import com.englishtown.promises.When;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import io.swiftworks.vertx.firebase.queue.Queue;
 import io.vertx.core.Vertx;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 public class Authenticator {
@@ -21,6 +27,7 @@ public class Authenticator {
     private When when;
     private Vertx vertx;
 
+    private long refreshInterval = 5L * 60L * 1000L; // 5 minutes by default
     private Long timerId;
 
     public Authenticator(Vertx vertx, When when, Firebase firebase) {
@@ -64,11 +71,10 @@ public class Authenticator {
         cleanup();
 
         Long now = new Date().getTime();
-        Long expires = authData.getExpires() - now;
-        Long fiveMinutes = 5L * 60L * 1000L;
-        Long refresh = expires - fiveMinutes;
+        Long expires = authData.getExpires() * 1000 - now;
+        Long refresh = expires - refreshInterval;
 
-        if (refresh > fiveMinutes) {
+        if (refresh > refreshInterval) {
             timerId = vertx.setTimer(refresh, (Long id) -> authenticate(provider));
         } else {
             log.warn("Short Firebase Token Expiration Detected: " + expires + "ms");
