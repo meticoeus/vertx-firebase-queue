@@ -49,6 +49,9 @@ public class Authenticator {
         provider.getToken().then((String token) -> {
             authenticate(token, deferred);
             return null;
+        }).otherwise((Throwable t) -> {
+            deferred.reject(t);
+            return null;
         });
 
         deferred.getPromise().then((AuthData authData) -> {
